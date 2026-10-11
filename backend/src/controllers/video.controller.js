@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary, deleteOnCloudinary } from "../utils/cloudinary.js";
-import mongoose  from "mongoose";
+import mongoose from "mongoose";
 import { User } from "../models/user.model.js";
 
 const isVideoOwner = async (videoId, loggedInUser) => {
@@ -118,6 +118,7 @@ const getVideoById = asyncHandler(async (req, res) => {
             $project: {
               username: 1,
               avatar: 1,
+              fullName: 1,
             },
           },
         ],
@@ -128,6 +129,7 @@ const getVideoById = asyncHandler(async (req, res) => {
       $project: {
         "owner.username": 1,
         "owner.avatar": 1,
+        "owner.fullName": 1,
         thumbnail: 1,
         videoFile: 1,
         title: 1,
@@ -210,6 +212,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
             $project: {
               username: 1,
               avatar: 1,
+              fullName: 1,
             },
           },
         ],
@@ -484,8 +487,6 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, "Toggle Successfully"));
 });
-
-
 
 // this one for if data comes from  req.body
 const updatePublishStatus = asyncHandler(async (req, res) => {

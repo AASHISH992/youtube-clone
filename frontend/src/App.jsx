@@ -1,22 +1,24 @@
 import { useState } from "react";
 import "./App.css";
 import { Outlet } from "react-router-dom";
-import { Header, Footer, Button } from "./components";
+import {Header, SideBar } from "./shared/layouts/index.js";
+import Button from "./shared/components/Button.jsx";
+import Home from "./features/home/components/Home.jsx";
+import OpenPlaylists from "./features/playlist/components/OpenPlaylists.jsx";
+import CreatePlaylist from "./features/playlist/components/CreatePlaylist.jsx";
+import CreatedAccount from "./features/auth/components/CreateAccount.jsx";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import SignIn from "./features/auth/components/SignIn.jsx";
+import { Watch } from "./features/video/components/index.js";
 
-import {
-  Home
-} from "./pages";
-
-import {OpenPlaylists, CreatePlaylist } from "./components";
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
     <div className="flex flex-col h-screen">
-      <OpenPlaylists children="Linux" />
-      <Footer className="flex-0 fixed bottom-0 w-full" />
-      <main className="flex-grow"> {/* <Outlet /> */} </main>
+      <Header />
+      <main className="flex-grow">   <Outlet />
+      </main>
     </div>
   );
 }
