@@ -9,7 +9,7 @@ import {
   togglePublishStatus,
   updatePublishStatus,
 } from "../controllers/video.controller.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { verifyJWT, optionalVerifyJWT } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
@@ -32,7 +32,7 @@ router.route("/publish").post(
 router.route("/").get(getAllVideos);
 
 router.route("/:videoId")
-  .get(getVideoById)
+  .get(optionalVerifyJWT, getVideoById)
   .patch(verifyJWT, updatePublishStatus)
   .delete(verifyJWT, deleteVideoById)
 
