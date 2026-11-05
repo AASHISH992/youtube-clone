@@ -5,6 +5,7 @@ import {
   updateCommentApi,
 } from "../api/comment.api.js";
 import { useState, useEffect } from "react";
+import { useAuthStore } from "../../auth/store/authStore.js";
 
 function useComment(videoId) {
   const [comments, setComments] = useState({ docs: [], totalDocs: 0 });
@@ -28,9 +29,18 @@ function useComment(videoId) {
   async function addComment(videoId, comment) {
     try {
       const response = await addCommentApi(videoId, comment);
+
+      const currentUser = useAuthStore.getState().user;
+
+      const newCommentWithUser = {
+        ...response.data,
+        username: currentUser?.username || "You",
+        avatar: currentUser?.avatar,
+      };
+
       setComments((prev) => ({
         ...prev,
-        docs: [response.data, ...(prev.docs || [])],
+        docs: [newCommentWithUser, ...(prev.docs || [])],
         totalDocs: prev.totalDocs + 1,
       }));
     } catch (err) {
@@ -40,17 +50,28 @@ function useComment(videoId) {
 
   async function deleteComment(commentId) {
     try {
-      const response = await deleteCommentApi(commentId);
-      setComments(response.data);
+      await deleteCommentApi(commentId);
+      setComments((prev) => ({
+        ...prev,
+        docs: prev.docs.filter((comment) => comment._id !== commentId),
+        totalDocs: Math.max(0, prev.totalDocs - 1),
+      }));
     } catch (err) {
       setError(err.message);
     }
   }
 
-  async function updateComment(commentId, comment) {
+  async function updateComment(commentId, newContent) {
     try {
-      const response = await updateCommentApi(commentId, comment);
-      setComments(response.data);
+      const response = await updateCommentApi(commentId, newContent);
+      setComments((prev) => ({
+        ...prev,
+        docs: prev.docs.map((comment) =>
+          comment._id === commentId
+            ? { ...comment, content: response.data.content, updatedAt: new Date() }
+            : comment,
+        ),
+      }));
     } catch (err) {
       setError(err.message);
     }

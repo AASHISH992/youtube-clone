@@ -1,6 +1,7 @@
-import {Video} from "./Video.jsx";
-import Videos from "./Videos.jsx";
+import { VideoCard } from "./VideoCard.jsx";
+import VideoList from "./VideoList.jsx";
 import { LikeButton } from "./LikeButton.jsx";
+import { DislikeButton } from "./DislikeButton.jsx";
 import { SubscribeButton } from "./SubscribeButton.jsx";
 import { CommentSection } from "./CommentSection.jsx";
 import {
@@ -12,9 +13,10 @@ import { VideoPlayer } from "./VideoPlayer.jsx";
 import { Description } from "./Description.jsx";
 
 export {
-  Video,
-  Videos,
+  VideoCard,
+  VideoList,
   LikeButton,
+  DislikeButton,
   SubscribeButton,
   CommentSection,
   ThumbnailViewModelImage,

@@ -89,3 +89,5 @@ export default function Playlists() {
     </Container>
   );
 }
+
+export { Playlists };

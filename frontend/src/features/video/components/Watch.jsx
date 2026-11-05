@@ -1,15 +1,13 @@
 import { Container } from "../../../shared/components/index.js";
 import { VideoPlayer } from "./VideoPlayer.jsx";
 import {
-  AvatarShapeAvatarSizeSmall,
-  LockupMetadataViewModelAvatar,
   LockupMetadataViewModelTextContainer,
   ContentMetadataViewModelMetadataRow,
   AttributedStringWhiteSpacePreWrap,
   AttributedStringHost,
 } from "../../../shared/components/index.js";
 
-import { Videos } from "./index.js";
+import { VideoList } from "./index.js";
 import {
   formatDate,
   formatDuration,
@@ -19,6 +17,7 @@ import { Link } from "react-router-dom";
 import {
   SubscribeButton,
   LikeButton,
+  DislikeButton,
   Description,
   CommentSection,
 } from "./index.js";
@@ -26,6 +25,9 @@ import {
 import { useParams } from "react-router-dom";
 import { useVideo } from "../hooks/useVideo.js";
 import { useVideos } from "../../home/hooks/useVideos.js";
+import { useLike } from "../hooks/useLike.js";
+import { useAuthStore } from "../../auth/store/authStore.js";
+import { useSubscription } from "../hooks/useSubscription.js";
 
 function Watch() {
   const { videoId } = useParams();
@@ -39,6 +41,21 @@ function Watch() {
     isLoading: recLoading,
     error: recError,
   } = useVideos();
+
+  const {
+    isLiked: isVideoLiked,
+    like: likeVideo,
+    likeCount: videoLikeCount,
+  } = useLike({ videoId });
+
+  async function handleLike() {
+    likeVideo(videoId);
+  }
+
+  function handleDislike(e) {
+    e.preventDefault();
+    console.log("disliked");
+  }
 
   if (videoLoading)
     return <p className="p-4 text-center"> Loading video... </p>;
@@ -57,11 +74,16 @@ function Watch() {
           <WatchMetadata
             key={video._id}
             id={video._id}
+            channelOwnerId={video.owner?._id}
             channelAvatar={video.owner?.avatar}
             channelName={video.owner?.fullName}
             description={video.description}
             uploadDate={formatDate(video.createdAt)}
             views={formatViews(video.views)}
+            handleLike={handleLike}
+            handleDislike={handleDislike}
+            isVideoLiked={isVideoLiked}
+            videoLikeCount={videoLikeCount}
           />
         </div>
       </div>
@@ -72,14 +94,15 @@ function Watch() {
             {recLoading && <p className="text-center">Loading...</p>}
             {recError && <p className="text-center text-red-500">{recError}</p>}
             {!recLoading && !recError && (
-              <Videos
-                className='flex-col'
-                videos={recommendedVideos?.map((v) => ({
-                  key: v._id,
+              <VideoList
+                className="flex-col overflow-y-auto"
+                videoList={recommendedVideos?.filter((v) => v._id !== videoId).map((v) => ({
+                  isFlex: false,
                   id: v._id,
+                  channelId: v.owner?._id,
                   thumbnail: v.thumbnail,
                   title: v.title,
-                  channel: v.owner?.username,
+                  channel: v.owner?.fullName,
                   avatar: v.owner?.avatar,
                   views: formatViews(v.views),
                   uploadedTime: formatDate(v.createdAt),
@@ -94,27 +117,41 @@ function Watch() {
   );
 }
 
-function WatchMetadata({ id, channelAvatar, channelName, description, uploadDate, views }) {
+function WatchMetadata({
+  id,
+  channelOwnerId,
+  channelAvatar,
+  channelName,
+  description,
+  uploadDate,
+  views,
+  handleLike,
+  handleDislike,
+  isVideoLiked,
+  videoLikeCount,
+}) {
+  const { user } = useAuthStore();
+  const isOwner = user?._id === channelOwnerId;
+  const { subscriberCount } = useSubscription({ channelId: channelOwnerId });
+
   return (
     <div className="h-full">
       <div className="flex justify-between h-1/3">
-        <div className="flex">
-          <LockupMetadataViewModelAvatar>
-            <AvatarShapeAvatarSizeSmall>
-              <img
-                src={channelAvatar}
-                alt="avatar"
-                className="rounded-xl w-full h-full"
-              />
-            </AvatarShapeAvatarSizeSmall>
-          </LockupMetadataViewModelAvatar>
+        <div className="flex ">
+          <Link to={`/channel/${channelOwnerId}`} className='size-12' >
+            <img
+              src={channelAvatar}
+              alt="avatar"
+              className="rounded-full w-full aspect-square object-cover"
+            />
+          </Link>
 
           <LockupMetadataViewModelTextContainer className="pr-4">
             {/* Channel Name */}
             <ContentMetadataViewModelMetadataRow className="m-0">
               <AttributedStringHost>
                 <AttributedStringWhiteSpacePreWrap>
-                  <Link to={`/channel/${id}`}>
+                  <Link to={`/channel/${channelOwnerId}`}>
                     <p className="text-sm font-medium antialiased line-clamp-2">
                       {channelName}
                     </p>
@@ -126,19 +163,41 @@ function WatchMetadata({ id, channelAvatar, channelName, description, uploadDate
               <AttributedStringWhiteSpacePreWrap>
                 {/* Channel Subscribers */}
                 <AttributedStringHost className=" text-xs text-gray-600 truncate">
-                  1.2M subscribers
+                  {subscriberCount}
                 </AttributedStringHost>
               </AttributedStringWhiteSpacePreWrap>
             </ContentMetadataViewModelMetadataRow>
           </LockupMetadataViewModelTextContainer>
 
-          <div>
-            <SubscribeButton />
+          <div className="ml-4 h-11">
+            <SubscribeButton channelOwnerId={channelOwnerId} />
           </div>
         </div>
-        <div>
-          <LikeButton />
-        </div>
+        {!isOwner && (
+          <div className="flex items-center justify-center h-11 w-32 bg-gray-100 rounded-full">
+            <button
+              className="w-2/3 hover:bg-gray-200 h-full rounded-l-full "
+              onClick={handleLike}
+              type="button"
+            >
+              <LikeButton
+                isLiked={isVideoLiked}
+                likeCount={videoLikeCount}
+                isTouchFeedback={false}
+                className="h-full"
+              />
+            </button>
+            <button
+              type="button"
+              onClick={handleDislike}
+              className="h-full flex justify-center items-center pr-1  border-gray-400 w-1/3 hover:bg-gray-300 my-1 rounded-r-full"
+            >
+              <div className="border-l h-1/2 w-full border-gray-400">
+                <DislikeButton className="h-full" />
+              </div>
+            </button>
+          </div>
+        )}
       </div>
       <div className="h-2/3">
         <Description

@@ -79,4 +79,3 @@ export {
   ButtonOrAnchorHost,
   PanelHeaderViewModelTitleWrapper,
 };
-export default PlaylistDialogBox;

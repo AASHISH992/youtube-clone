@@ -1,6 +1,7 @@
 function VideoPlayer({ videoFile, thumbnail }) {
   return (
       <video
+      key={videoFile}
       src={videoFile}
       poster={thumbnail}
       controls

@@ -26,7 +26,7 @@ function useVideo(videoId) {
             }
         }
         fetchVideos();
-    }, []);
+    }, [videoId]);
     return { video, isLoading, error };
 }
 
