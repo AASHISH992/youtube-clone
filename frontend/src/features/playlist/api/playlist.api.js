@@ -19,9 +19,9 @@ async function createPlaylistApi(playlist) {
   const { data } = await api.post("/playlists", playlist);
   return data;
 }
-async function updatePlaylistApi(playlistId, data) {
-  const { res } = await api.patch(`/playlists/${playlistId}`, data);
-  return res;
+async function updatePlaylistApi(playlistId, payload) {
+  const { data } = await api.patch(`/playlists/${playlistId}`, payload);
+  return data;
 }
 
 async function deletePlaylistApi(playlistId) {
