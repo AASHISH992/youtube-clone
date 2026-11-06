@@ -5,25 +5,30 @@ import usePlaylist from "../hooks/usePlaylist.js";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-function EditPlaylist({playlist, onClose }) {
-  const { updatePlaylist, isLoading } = usePlaylist();
+function EditPlaylist({
+  playlist,
+  updatePlaylist: parentUpdatePlaylist,
+  onClose,
+}) {
+  const { updatePlaylist: hookUpdatePlaylist, isLoading } = usePlaylist();
+  const updatePlaylist = parentUpdatePlaylist || hookUpdatePlaylist;
   const { playlistId } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [payload, setPayload] = useState({
     name: "",
     description: "",
   });
 
   useEffect(() => {
     if (playlist) {
-      setFormData({
+      setPayload({
         name: playlist.name || "",
         description: playlist.description || "",
       });
     }
   }, [playlist]);
 
-  const isFilled = Boolean(formData.name.trim() && formData.description.trim());
+  const isFilled = Boolean(payload.name.trim() && payload.description.trim());
 
   function handleCancel() {
     if (onClose) {
@@ -42,8 +47,8 @@ function EditPlaylist({playlist, onClose }) {
     }
 
     const res = await updatePlaylist(playlistId, {
-      name: formData.name.trim(),
-      description: formData.description.trim(),
+      name: payload.name.trim(),
+      description: payload.description.trim(),
     });
 
     if (res?.success) {
@@ -67,21 +72,21 @@ function EditPlaylist({playlist, onClose }) {
               <div className=" flex flex-col gap-3 ">
                 <div className="border border-gray-200 rounded-lg">
                   <input
-                    value={formData.name}
+                    value={payload.name}
                     className="outline-none p-4 m-0"
                     placeholder="Title"
                     onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
+                      setPayload({ ...payload, name: e.target.value })
                     }
                   />
                 </div>
                 <Input
                   label="Description"
-                  value={formData.description}
+                  value={payload.description}
                   className="border border-gray-300  text-wrap rounded-lg focus:outline-none focus:ring"
                   placeholder="Add description"
                   onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
+                    setPayload({ ...payload, description: e.target.value })
                   }
                 />
               </div>

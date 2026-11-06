@@ -10,17 +10,12 @@ import {
 } from "../../../shared/components/index.js";
 import { VideoList } from "../../video/components/index.js";
 import { Link, useParams } from "react-router-dom";
-import { useVideos } from "../../home/hooks/useVideos.js";
 import { EditPlaylist } from "./index.js";
 
 import { Plus, Pencil, Trash } from "lucide-react";
 import defaultThumbnail from "../../../assets/siente_dance.jpeg";
 import defaultAvatar from "../../../assets/images2.jpg";
-import {
-  formatDate,
-  formatDuration,
-  formatViews,
-} from "../../../shared/utils/index.js";
+import { formatDate, formatViews } from "../../../shared/utils/index.js";
 
 import usePlaylist from "../hooks/usePlaylist.js";
 import { useState } from "react";
@@ -28,7 +23,7 @@ import { useState } from "react";
 export default function ViewFullPlaylist(channelId, views) {
   const [showEditModal, setShowEditModal] = useState(false);
   const { playlistId } = useParams();
-  const { playlist, isLoading, error, deletePlaylist } =
+  const { playlist, isLoading, error, deletePlaylist, updatePlaylist } =
     usePlaylist(playlistId);
 
   if (isLoading) {
@@ -54,8 +49,13 @@ export default function ViewFullPlaylist(channelId, views) {
     `${formatDate(playlist.updateAt || playlist.createdAt)}`,
   ];
 
-  const handleDeletePlaylistButton = () => {
-    deletePlaylist;
+  const handleDeletePlaylistButton = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this playlist?",
+    );
+    if (confirmed) {
+      await deletePlaylist(playlistId);
+    }
   };
 
   const handleCreateButton = () => {
@@ -63,76 +63,70 @@ export default function ViewFullPlaylist(channelId, views) {
   };
 
   return (
-    <Container className="flex h-full ">
-      <div className="w-96 shrink-0 flex items-start justify-start pl-6">
-        <div className="h-9/10 w-90 absolute bottom-0 pb-6">
-          <div className="bg-blue-400 h-full rounded-2xl p-6">
-            <div className="">
-              <div className="w-full   ">
-                <img
-                  src={playlist?.videos?.[0]?.thumbnail || defaultThumbnail}
-                  alt="thumbnail"
-                  className="rounded-xl  w-full aspect-video object-cover"
-                />
-              </div>
-              <div className="grid grid-cols-1 grid-rows-3 my-4">
-                <span className="text-white text-3xl font-medium flex items-center">
-                  {playlist.name}
-                </span>
-                <span className="flex flex-row">
-                  <span className="flex items-center">
-                    <LockupMetadataViewModelAvatar className="">
-                      <Link to={`/channel/${channelId}`}>
-                        <AvatarShapeAvatarSizeExtraSmall>
-                          <img
-                            src={playlist.avatar || defaultAvatar}
-                            alt="avatar"
-                            className="rounded-xl aspect-square object-cover"
-                          />
-                        </AvatarShapeAvatarSizeExtraSmall>
-                      </Link>
-                    </LockupMetadataViewModelAvatar>
-                  </span>
-                  <span className="text-white flex items-center pl-2 text-xs">
-                    <span>{`by ${playlist.fullName || "User"}`}</span>
-                  </span>
-                </span>
-                <div>
-                  <MetaData items={metaItems} textColor="text-gray-200" />
-                </div>
-
-                {playlist.description && (
-                  <p className="text-xs text-gray-300 mt-2 line-clamp-3">
-                    {playlist.description}
-                  </p>
-                )}
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button
-                  bgColor="bg-white/10"
-                  textColor="text-white"
-                  className="flex items-center justify-center p-2 hover:bg-white/20 active:bg-white/30 text-sm"
-                >
-                  <Plus />
-                </Button>
-                <Button
-                  bgColor="bg-white/10"
-                  textColor="text-white"
-                  className="flex items-center justify-center p-2 hover:bg-white/20 active:bg-white/30 text-sm"
-                  onClick={() => setShowEditModal(true)}
-                >
-                  <Pencil />
-                </Button>
-                <Button
-                  bgColor="bg-white/10"
-                  textColor="text-white"
-                  className="flex items-center justify-center p-2 hover:bg-white/20 active:bg-white/30 text-sm"
-                  onClick={handleDeletePlaylistButton}
-                >
-                  <Trash />
-                </Button>
-              </div>
+    <Container className="flex flex-col lg:flex-row h-full">
+      <div className="w-full lg:w-96 shrink-0 flex items-start justify-start p-4 lg:pl-6 lg:px-0">
+        <div className="bg-blue-400 w-full lg:h-full xl:h-full rounded-2xl p-6 ">
+          <img
+            src={playlist?.videos?.[0]?.thumbnail || defaultThumbnail}
+            alt="thumbnail"
+            className="rounded-xl  w-full aspect-video object-cover"
+          />
+          <div className="grid grid-cols-1 grid-rows-3 my-4">
+            <span className="text-white text-3xl font-medium flex items-center">
+              {playlist.name}
+            </span>
+            <span className="flex flex-row">
+              <span className="flex items-center">
+                <LockupMetadataViewModelAvatar className="">
+                  <Link to={`/channel/${channelId}`}>
+                    <AvatarShapeAvatarSizeExtraSmall>
+                      <img
+                        src={playlist.avatar || defaultAvatar}
+                        alt="avatar"
+                        className="rounded-xl aspect-square object-cover"
+                      />
+                    </AvatarShapeAvatarSizeExtraSmall>
+                  </Link>
+                </LockupMetadataViewModelAvatar>
+              </span>
+              <span className="text-white flex items-center pl-2 text-xs">
+                <span>{`by ${playlist.fullName || "User"}`}</span>
+              </span>
+            </span>
+            <div>
+              <MetaData items={metaItems} textColor="text-gray-200" />
             </div>
+
+            {playlist.description && (
+              <p className="text-xs text-gray-300 mt-2 line-clamp-3">
+                {playlist.description}
+              </p>
+            )}
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              bgColor="bg-white/10"
+              textColor="text-white"
+              className="flex items-center justify-center p-2 hover:bg-white/20 active:bg-white/30 text-sm"
+            >
+              <Plus />
+            </Button>
+            <Button
+              bgColor="bg-white/10"
+              textColor="text-white"
+              className="flex items-center justify-center p-2 hover:bg-white/20 active:bg-white/30 text-sm"
+              onClick={() => setShowEditModal(true)}
+            >
+              <Pencil />
+            </Button>
+            <Button
+              bgColor="bg-white/10"
+              textColor="text-white"
+              className="flex items-center justify-center p-2 hover:bg-white/20 active:bg-white/30 text-sm"
+              onClick={handleDeletePlaylistButton}
+            >
+              <Trash />
+            </Button>
           </div>
         </div>
       </div>
@@ -163,6 +157,7 @@ export default function ViewFullPlaylist(channelId, views) {
       {showEditModal && (
         <EditPlaylist
           playlist={playlist}
+          updatePlaylist={updatePlaylist}
           onClose={() => setShowEditModal(false)}
         />
       )}
