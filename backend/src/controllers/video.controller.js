@@ -127,6 +127,7 @@ const getVideoById = asyncHandler(async (req, res) => {
     { $unwind: "$owner" },
     {
       $project: {
+        "owner._id": 1,
         "owner.username": 1,
         "owner.avatar": 1,
         "owner.fullName": 1,
@@ -146,7 +147,12 @@ const getVideoById = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
       req.user._id,
       {
-        $addToSet: { watchHistory: videoId },
+        $push: {
+          watchHistory: {
+            video: new mongoose.Types.ObjectId(videoId),
+            watchedAt: new Date(),
+          },
+        },
       },
       { returnDocument: "after" }
     );
