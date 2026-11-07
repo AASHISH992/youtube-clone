@@ -1,8 +1,4 @@
-import {
-  Container,
-  Button,
-  ButtonShape,
-} from "../../../shared/components/index.js";
+import { Container, Button } from "../../../shared/components/index.js";
 import {
   EllipsisVertical,
   Dot,
@@ -19,25 +15,18 @@ import {
   PlaylistList,
 } from "../../../features/playlist/components/index.js";
 import { VideoList } from "../../video/components/index.js";
-import { useWatchHistory } from "../../user/hooks/useWatchHistory.js";
-import { useVideos } from "../../home/hooks/useVideos.js";
-import {
-  formatDate,
-  formatDuration,
-  formatViews,
-} from "../../../shared/utils/index.js";
+import { useHistory } from "../../history/hooks/useHistory.js";
 import { useAuth } from "../../auth/hooks/useAuth.js";
 import usePlaylist from "../../playlist/hooks/usePlaylist.js";
-import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 
 export default function You() {
-  const { playlistId } = useParams();
   const {
     history: watchHistory,
     isLoading: historyLoading,
     error: historyError,
-  } = useWatchHistory();
+  } = useHistory();
   const {
     playlists,
     isLoading: isLoadingPlaylist,
@@ -51,7 +40,7 @@ export default function You() {
   };
 
   return (
-    <Container>
+    <Container className="pb-18">
       <div className="flex flex-col size-full bg-white">
         <div className="flex items-center gap-2 p-4">
           <img
@@ -64,15 +53,17 @@ export default function You() {
               {" "}
               {user?.fullName || "User"}
             </span>
-            <div className="flex">
-              <p className="text-sm text-gray-600">
-                @{user?.username || "username"}
-              </p>
-              <div className="pt-1">
-                <Dot size={14} className="text-gray-600" />
+            <Link to={`/channel/${user?.id}`}>
+              <div className="flex">
+                <p className="text-sm text-gray-600">
+                  @{user?.username || "username"}
+                </p>
+                <div className="pt-1">
+                  <Dot size={14} className="text-gray-600" />
+                </div>
+                <p className="text-sm text-gray-600">View channel</p>
               </div>
-              <p className="text-sm text-gray-600">View channel</p>
-            </div>
+            </Link>
           </div>
         </div>
 
@@ -81,7 +72,9 @@ export default function You() {
             <div className="flex mb-2 items-center px-3 justify-between ">
               <h3 className="">History</h3>
               <div className="flex items-center justify-center gap-3">
-                <ViewAllButton />
+                <Link to={`/history`}>
+                  <ViewAllButton />
+                </Link>
                 <Button
                   bgColor="bg-transparent"
                   textColor="text-black"
@@ -150,7 +143,9 @@ export default function You() {
                   onClose={() => setShowPlaylistCreateForm(false)}
                 />
               )}
-              <ViewAllButton />
+              <Link to={`/playlist`}>
+                <ViewAllButton />
+              </Link>
               <Button
                 bgColor="bg-transparent"
                 textColor="text-black"
@@ -169,15 +164,6 @@ export default function You() {
           </div>
           <div className="flex flex-col mt-4 px-3">
             <PlaylistList playlists={playlists} />
-          </div>
-
-          <div className="flex mt-4 p-3">
-            <div className="pr-4">
-              <SquarePlay />
-            </div>
-            <div>
-              <p> Your videos </p>
-            </div>
           </div>
         </div>
       </div>
