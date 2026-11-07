@@ -1,40 +1,50 @@
 import { Container } from "../../../shared/components/index.js";
 import { ArrowLeft, Search, EllipsisVertical } from "lucide-react";
 import history from "../../../assets/siente_dance.jpeg";
+import { useHistory } from "../hooks/useHistory.js";
+import { VideoList } from "../../video/components/index.js";
 
 function History() {
+  const {
+    history: watchHistory,
+    isLoading: historyLoading,
+    error: historyError,
+  } = useHistory();
   return (
-    <Container>
-      <div className="flex justify-between items-center gap-2 p-4">
-        <div className="flex items-center gap-2 ">
-          <ArrowLeft />
-          <div>
-            <h3> History </h3>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <Search />
-          <EllipsisVertical />
-        </div>
+    <Container className="p-6">
+      <div className="flex">
+        <span className="text-4xl font-semibold"> History </span>
       </div>
-
-      <div className="gap-4 p-4">
-        <h1> History </h1>
-      </div>
-
       <div>
         <div className="p-4">
-          <h3 className="text-base font-normal"> Date </h3>
+          <span className="text-xl font-semibold"> Date </span>
         </div>
-        <div className="flex flex-row px-3">
-          <img src={history} alt="history" className="w-40 rounded-lg" />
-          <div className="px-2">
-            <h4>15 Books That Helped Make Me My First Million</h4>
-            <p className="text-xs text-gray-600"> Channel Name</p>
-            <p className="text-xs text-gray-600"> views </p>
-          </div>
-          <div>
-            <EllipsisVertical className="h-full pb-8" size={24} />
+        <div className="flex flex-row  px-3">
+          <div className="overflow-x-auto">
+            {!historyLoading && !historyError && watchHistory?.length === 0 && (
+              <p className="text-gray-500 text-sm p-4">No watch history yet.</p>
+            )}
+            {historyError && (
+              <p className="text-center text-red-500">{historyError}</p>
+            )}
+            {!historyLoading && !historyError && watchHistory.length > 0 && (
+              <VideoList
+                isScroll={false}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                videoList={watchHistory.map((video) => ({
+                  isAvatar: false,
+                  id: video._id,
+                  channelId: video.owner?._id,
+                  thumbnail: video.thumbnail,
+                  title: video.title,
+                  channel: video.owner?.fullName,
+                  avatar: video.owner?.avatar,
+                  views: video.views,
+                  uploadedTime: video.createdAt,
+                  duration: video.duration,
+                }))}
+              />
+            )}
           </div>
         </div>
       </div>
