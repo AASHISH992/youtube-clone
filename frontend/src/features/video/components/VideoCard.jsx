@@ -15,6 +15,11 @@ import {
   formatViews,
 } from "../../../shared/utils/index.js";
 
+import ThreeDotMenu from "../../../shared/components/ThreeDotMenu.jsx";
+
+import { Bookmark  } from "lucide-react";
+import { useState } from 'react'
+
 function VideoCard({
   isFlex,
   isAvatar,
@@ -30,10 +35,25 @@ function VideoCard({
   duration,
 }) {
   const metaItems = [`${formatViews(views)}`, formatDate(uploadedTime)];
+  const menuItems = [];
+  const [isHover, setIsHover] = useState(false);
+
+  menuItems.push({
+    label: "Save to playlist",
+    icon: <Bookmark className="size-4 mr-2 inline" />,
+    onClick: () => {
+      const newText = prompt("Edit your comment:", comment.content);
+      if (newText && newText.trim() !== comment.content) {
+        onUpdateComment(comment._id, newText.trim());
+      }
+    },
+  });
 
   return (
     <div
-      className={`p-2 ${isFlex ? "w-full" : isScroll ? "w-56 sm:w-64 lg:w-80 xl:w-96 shrink-0 " : "w-full"}`}
+      className={`p-2 rounded-xl ${isHover && 'bg-red-100' } ${isFlex ? "w-full" : isScroll ? "w-56 sm:w-64 lg:w-80 xl:w-96 shrink-0 " : "w-full"}`}
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
     >
       <div className={`${isFlex && "flex"}`}>
         <div className="relative mb-2">
@@ -118,6 +138,7 @@ function VideoCard({
               </ContentMetadataViewModelMetadataRow>
             </LockupMetadataViewModelTextContainer>
           )}
+          {isHover && <ThreeDotMenu items={menuItems} />}
         </LockupViewModelMetadata>
       </div>
     </div>
