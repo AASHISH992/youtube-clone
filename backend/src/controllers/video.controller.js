@@ -144,6 +144,14 @@ const getVideoById = asyncHandler(async (req, res) => {
   ]);
 
   if (req.user?._id) {
+    const videoObjectId = new mongoose.Types.ObjectId(videoId);
+
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: {
+        watchHistory: { video: videoObjectId },
+      },
+    });
+
     await User.findByIdAndUpdate(
       req.user._id,
       {
