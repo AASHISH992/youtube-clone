@@ -54,16 +54,16 @@ export default function SignIn() {
 
         <form onSubmit={handleSubmit}>
           <div className="m-4 p-4">
-            <Input
+            <input
               placeholder="Email or username"
-              className="rounded-md ring mb-4"
+              className="rounded-md ring mb-4 p-2 w-full"
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
             />
-            <Input
+            <input
               placeholder="Enter your password"
-              className="rounded-md ring"
+              className="rounded-md ring mb-4 p-2 w-full"
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }

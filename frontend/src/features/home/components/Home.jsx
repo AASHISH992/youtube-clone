@@ -1,12 +1,7 @@
 import { SideBar } from "../../../shared/layouts/index.js";
 import { Container } from "../../../shared/components/index.js";
-import { Videos } from "../../video/components/index.js";
+import { VideoList } from "../../video/components/index.js";
 import { useVideos } from "../hooks/useVideos.js";
-import {
-  formatDate,
-  formatDuration,
-  formatViews,
-} from "../../../shared/utils/index.js";
 
 function Home() {
   const { videos, isLoading, error } = useVideos();
@@ -14,22 +9,24 @@ function Home() {
   return (
     <Container className="flex flex-row h-full">
       <SideBar />
-      <div className="w-full h-full">
-        <div className="mx-4 pt-4 truncate">
+      <div>
+        <div className="mx-4 pt-4">
           {isLoading && <p className="text-center">Loading...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
           {!isLoading && !error && (
-            <Videos
+            <VideoList
+              isAvatar={true}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
               videos={videos.map((video) => ({
-                key: video._id,
                 id: video._id,
+                channelId: video.owner?._id,
                 thumbnail: video.thumbnail,
                 title: video.title,
-                channel: video.owner?.username,
+                channel: video.owner?.fullName,
                 avatar: video.owner?.avatar,
-                views: formatViews(video.views),
-                uploadedTime: formatDate(video.createdAt),
-                duration: formatDuration(video.duration),
+                views: video.views,
+                uploadedTime: video.createdAt,
+                duration: video.duration,
               }))}
             />
           )}

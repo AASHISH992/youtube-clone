@@ -132,6 +132,57 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
   }
 });
 
+const getVideoLikeStatus = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+  if (!isValidObjectId(videoId)) {
+    throw new ApiError(400, "Invalid Video Id");
+  }
+
+  const like = await Like.findOne({
+    video: new mongoose.Types.ObjectId(videoId),
+    likedBy: req.user._id,
+  });
+  res.status(200).json(new ApiResponse(200, { isLiked: !!like }));
+});
+
+const getVideoLikeCount = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+  if (!isValidObjectId(videoId)) {
+    throw new ApiError(400, "Invalid Video Id");
+  }
+
+  const likeCount = await Like.countDocuments({
+    video: new mongoose.Types.ObjectId(videoId),
+  });
+
+  res.status(200).json(new ApiResponse(200, { likeCount }));
+});
+const getCommentLikeCount = asyncHandler(async (req, res) => {
+  const { commentId } = req.params;
+  if (!isValidObjectId(commentId)) {
+    throw new ApiError(400, "Invalid Comment Id");
+  }
+
+  const likeCount = await Like.countDocuments({
+    comment: new mongoose.Types.ObjectId(commentId),
+  });
+
+  res.status(200).json(new ApiResponse(200, { likeCount }));
+});
+
+const getCommentLikeStatus = asyncHandler(async (req, res) => {
+  const { commentId } = req.params;
+  if (!isValidObjectId(commentId)) {
+    throw new ApiError(400, "Invalid Comment Id");
+  }
+
+  const like = await Like.findOne({
+    comment: new mongoose.Types.ObjectId(commentId),
+    likedBy: req.user._id,
+  });
+  res.status(200).json(new ApiResponse(200, { isLiked: !!like }));
+});
+
 const getLikedVideos = asyncHandler(async (req, res) => {
   //TODO: get all liked videos
   const { page = 1, limit = 10 } = req.query;
@@ -220,4 +271,13 @@ const getLikedVideos = asyncHandler(async (req, res) => {
     );
 });
 
-export { toggleCommentLike, toggleTweetLike, toggleVideoLike, getLikedVideos };
+export {
+  toggleCommentLike,
+  toggleTweetLike,
+  toggleVideoLike,
+  getLikedVideos,
+  getVideoLikeStatus,
+  getCommentLikeStatus,
+  getVideoLikeCount,
+  getCommentLikeCount,
+};

@@ -50,7 +50,6 @@ export default function You() {
           />
           <div>
             <span className="text-4xl font-bold text-black">
-              {" "}
               {user?.fullName || "User"}
             </span>
             <Link to={`/channel/${user?.id}`}>
@@ -67,7 +66,7 @@ export default function You() {
           </div>
         </div>
 
-        <div className="w-auto h-auto">
+        <div className="w-auto h-auto ">
           <div className="mb-4 border-y border-gray-300 py-3">
             <div className="flex mb-2 items-center px-3 justify-between ">
               <h3 className="">History</h3>
@@ -91,8 +90,8 @@ export default function You() {
                 </Button>
               </div>
             </div>
-            <div className="flex flex-row  px-3">
-              <div className="overflow-x-auto">
+            <div className="flex flex-row px-3">
+              <div className="w-full overflow-x-auto pb-24 -mb-20">
                 {!historyLoading &&
                   !historyError &&
                   watchHistory?.length === 0 && (

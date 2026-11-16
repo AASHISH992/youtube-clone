@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import Container from "./Container.jsx";
-import BottomSheet, { VISIBILITY_OPTIONS } from "./BottomSheet.jsx";
+import BottomSheet from "./BottomSheet.jsx";
 
 function CustomSelect() {
   return (
@@ -25,5 +25,5 @@ function CustomSelect() {
   );
 }
 
-export { CustomSelect, BottomSheet, VISIBILITY_OPTIONS };
+export { CustomSelect, BottomSheet };
 export default CustomSelect;

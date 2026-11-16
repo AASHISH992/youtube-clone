@@ -30,16 +30,13 @@ async function deletePlaylistApi(playlistId) {
 }
 
 async function addVideoToPlaylistApi(playlistId, videoId) {
-  const { data } = await api.post(`/playlists/${playlistId}/videos`, {
-    videoId,
-  });
+  const { data } = await api.post(`/playlists/${playlistId}/videos/${videoId}`);
   return data;
 }
 
 async function removeVideoFromPlaylistApi(playlistId, videoId) {
   const { data } = await api.delete(
-    `/playlists/${playlistId}/videos/${videoId}`,
-  );
+    `/playlists/${playlistId}/videos/${videoId}`);
   return data;
 }
 

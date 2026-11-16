@@ -4,17 +4,12 @@ function ContentMetadataViewModelMetadataRow({
   children,
   className = "h-8 mt-[2px]",
 }) {
-  return (
-    <div className={`flex items-center ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`flex items-center ${className}`}>{children}</div>;
 }
 
 function ContentMetadataViewModel({ children, className = "" }) {
   return <div className={`flex flex-col ${className}`}>{children}</div>;
 }
-
 
 function LockupViewModelWrapper({ children }) {
   return (
@@ -29,13 +24,13 @@ function LockupViewModel({ children }) {
 }
 
 function LockupViewModelMetadata({ children }) {
-  return <div className="flex flex-row items-center">{children}</div>;
+  return <div className="flex flex-row items-start justify-between w-full">{children}</div>;
 }
 
 function LockupMetadataViewModelHost({ children }) {}
 
 function LockupMetadataViewModelTextContainer({ children }) {
-    return <div className='ml-2'> {children} </div>;
+  return <div className="ml-2 min-w-0 flex-1"> {children} </div>;
 }
 
 function LockupMetadataViewModelHeadingReset({ children }) {}
@@ -51,15 +46,18 @@ function LockupMetadataViewModelMetadata({ children }) {
 }
 
 function LockupMetadataViewModelMenuButton({ children }) {
-    return (
-        <div
-        >
-        Hello
-        </div>
-    )
+  return <div>Hello</div>;
 }
 
-function ButtonViewModel({ chilren }) {}
+function ButtonShape({ children }) {
+  return (
+    <div className="flex items-center justify-center">
+      <div className="flex items-center rounded-full border p-2 border-gray-300">
+      {children}
+      </div>
+    </div>
+  );
+}
 
 {
   /* It provide href to the videos */
@@ -76,21 +74,18 @@ function AttributedStringWhiteSpacePreWrap({ children }) {
   return <span className="whitespace-pre-wrap">{children}</span>;
 }
 
-function MetaData({ items = [] }) {
+function MetaData({ items = [],textColor='text-gray-600', className = "text-xs" }) {
   return (
-    <div className="flex items-center">
+    <div className="flex items-center flex-nowrap whitespace-nowrap overflow-hidden truncate">
       {items.map((text, index) => (
-        <div key={index} className="flex items-center">
-          {index < items.length - 1 && (
-            <Dot size={9} className="text-gray-600 flex-none" />
-          )}
-          <AttributedStringWhiteSpacePreWrap>
-            <p className="text-xs text-[#606060] ">{text}</p>
-          </AttributedStringWhiteSpacePreWrap>
-
+        <div
+          key={index}
+          className="flex items-center flex-nowrap overflow-hidden"
+        >
+          <span className={` ${textColor} ${className} `}>{text}</span>
           {/* Render a dot after every item EXCEPT the last one */}
           {index < items.length - 1 && (
-            <Dot size={9} className="text-gray-600 flex-none" />
+            <Dot size={9} className={`${textColor} flex-none`} />
           )}
         </div>
       ))}
@@ -111,7 +106,7 @@ export {
   LockupMetadataViewModelTitle,
   LockupMetadataViewModelMetadata,
   LockupMetadataViewModelMenuButton,
-  ButtonViewModel,
+  ButtonShape,
   LockupViewModelContentImage,
   AttributedStringWhiteSpacePreWrap,
 };

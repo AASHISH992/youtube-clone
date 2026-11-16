@@ -1,12 +1,7 @@
 import React, { useId } from "react";
 
 const Input = React.forwardRef(function Input(
-  {
-    label,
-    className = "px-4 py-2 text-sm w-full h-[40px]",
-    onInput,
-    ...props
-  },
+  { label, className = "px-4 py-2 text-sm w-full h-[40px]", onInput, ...props },
   ref,
 ) {
   const id = useId();
@@ -22,13 +17,16 @@ const Input = React.forwardRef(function Input(
   return (
     <div className="w-full">
       {label && (
-        <label className="inline-block ml-2 pl-1 mb-1 text-sm font-medium" htmlFor={id}>
+        <label
+          className="inline-block ml-2 pl-1 mb-1 text-sm font-medium"
+          htmlFor={id}
+        >
           {label}
         </label>
       )}
       <textarea
         rows={1}
-        className={`text-sm resize-none overflow-hidden ${className}`}
+        className={`text-sm resize-none overflow-hidden px-4 py-2 w-full ${className}`}
         ref={ref}
         onInput={handleAutoGrow}
         {...props}
@@ -39,4 +37,4 @@ const Input = React.forwardRef(function Input(
 });
 
 export default Input;
-
+export { Input };

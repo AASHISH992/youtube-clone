@@ -10,7 +10,6 @@ import {
 import { VideoList } from "./index.js";
 import {
   formatDate,
-  formatDuration,
   formatViews,
 } from "../../../shared/utils/index.js";
 import { Link } from "react-router-dom";
@@ -96,18 +95,20 @@ function Watch() {
             {!recLoading && !recError && (
               <VideoList
                 className="flex-col overflow-y-auto"
-                videoList={recommendedVideos?.filter((v) => v._id !== videoId).map((v) => ({
-                  isFlex: false,
-                  id: v._id,
-                  channelId: v.owner?._id,
-                  thumbnail: v.thumbnail,
-                  title: v.title,
-                  channel: v.owner?.fullName,
-                  avatar: v.owner?.avatar,
-                  views: formatViews(v.views),
-                  uploadedTime: formatDate(v.createdAt),
-                  duration: formatDuration(v.duration),
-                }))}
+                videoList={recommendedVideos
+                  ?.filter((v) => v._id !== videoId)
+                  .map((v) => ({
+                    isFlex: false,
+                    id: v._id,
+                    channelId: v.owner?._id,
+                    thumbnail: v.thumbnail,
+                    title: v.title,
+                    channel: v.owner?.fullName,
+                    avatar: v.owner?.avatar,
+                    views: v.views,
+                    uploadedTime: v.createdAt,
+                    duration: v.duration,
+                  }))}
               />
             )}
           </div>
@@ -138,7 +139,7 @@ function WatchMetadata({
     <div className="h-full">
       <div className="flex justify-between h-1/3">
         <div className="flex ">
-          <Link to={`/channel/${channelOwnerId}`} className='size-12' >
+          <Link to={`/channel/${channelOwnerId}`} className="size-12">
             <img
               src={channelAvatar}
               alt="avatar"

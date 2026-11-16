@@ -17,7 +17,9 @@ const getChannelStats = asyncHandler(async (req, res) => {
   if (!channel) {
     throw new ApiError(404, "Channel not found");
   }
-  const totalVideos = await Video.countDocuments({ owner: new mongoose.Types.ObjectId(channelId) });
+  const totalVideos = await Video.countDocuments({
+    owner: new mongoose.Types.ObjectId(channelId),
+  });
 
   const totalSubscribers = await Subscription.countDocuments({
     channel: channelId,
@@ -40,15 +42,24 @@ const getChannelStats = asyncHandler(async (req, res) => {
     },
   ]);
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { totalVideos, totalSubscribers, totalLikes, totalViews },
-        "Channel stats fetched successfully"
-      )
-    );
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        channel: {
+          fullName: channel.fullName,
+          username: channel.username,
+          avatar: channel.avatar,
+          coverImage: channel.coverImage,
+        },
+        totalVideos,
+        totalSubscribers,
+        totalLikes,
+        totalViews,
+      },
+      "Channel stats fetched successfully"
+    )
+  );
 });
 
 const getChannelVideos = asyncHandler(async (req, res) => {

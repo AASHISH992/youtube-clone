@@ -9,22 +9,23 @@ function PanelHeaderViewModelTitleWrapper({ children, className }) {
   );
 }
 
-function ListItemViewModelLayoutWrapper({ children }) {
-  return <div className=" border-t border-gray-300">{children}</div>;
+function ListItemViewModelLayoutWrapper({ children, ref }) {
+  return <div ref={ref} className=" border-b border-gray-300">{children}</div>;
 }
 
 function ListItemViewModelContainer({ children }) {
-  return <ul className=" flex-0 flex-col w-full items-start">{children}</ul>;
+  return <ul className="flex flex-col w-full">{children}</ul>;
 }
 
-function ButtonOrAnchor({ children }) {
+function ButtonOrAnchor({ children, onClick }) {
   return (
-    <li className="w-full">
+    <li className="">
       <Button
-        type="submit"
-        bgColor="bg-[#ffffff1A]"
+        type="button"
+        bgColor="bg-white"
         textColor="text-black"
-        className="rounded-none py-1 px-3 antailiased w-full flex"
+        className="rounded-none antailiased w-full flex"
+        onClick={onClick}
       >
         {children}
       </Button>
@@ -84,7 +85,10 @@ function ListItemViewModelLayoutContainer({ children }) {
   return <div className="w-full flex items-start">{children}</div>;
 }
 
-function ListItemViewModelImageContainer({ children, className='mx-2 my-3' }) {
+function ListItemViewModelImageContainer({
+  children,
+  className = "mx-2 my-3",
+}) {
   return <div className={`${className}`}>{children}</div>;
 }
 

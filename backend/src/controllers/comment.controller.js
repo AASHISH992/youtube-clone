@@ -108,7 +108,7 @@ const addComment = asyncHandler(async (req, res) => {
 
 const updateComment = asyncHandler(async (req, res) => {
   // TODO: update a comment
-  const { content, videoId } = req.body;
+  const { content } = req.body;
 
   const { commentId } = req.params;
 
@@ -128,10 +128,6 @@ const updateComment = asyncHandler(async (req, res) => {
 
   if (!content?.trim()) {
     throw new ApiError(400, "Comment should not be empty");
-  }
-
-  if (!isValidObjectId(videoId)) {
-    throw new ApiError(400, "Invalid channel id");
   }
 
   const updatedComment = await Comment.findByIdAndUpdate(

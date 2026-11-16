@@ -125,28 +125,36 @@ function usePlaylist(playlistId) {
     }
   }
 
-  async function addVideo(data) {
+  async function addVideo({ playlistId, videoId }) {
     try {
       setIsLoading(true);
-      const response = await addVideoToPlaylistApi(data);
-      setVideo((prev) => [response.data, ...(prev || [])]);
-      navigate("/feed/you");
-      return { success: true, data: response.data };
+      const response = await addVideoToPlaylistApi(playlistId, videoId);
+      const updatedPlaylist = response.data;
+
+      setPlaylists((prev) =>
+        prev.map((item) => (item._id === playlistId ? updatedPlaylist : item)),
+      );
+
+      return { success: true, data: updatedPlaylist };
     } catch (err) {
-      setError(err.message || "Failed to Create Playlist");
+      setError(err.message || "Failed to add video");
     } finally {
       setIsLoading(false);
     }
   }
-  async function removeVideo(data) {
+  async function removeVideo({ playlistId, videoId }) {
     try {
       setIsLoading(true);
-      const response = await removeVideoFromPlaylistApi(data);
-      setVideo((prev) => [response.data, ...(prev || [])]);
-      navigate("/feed/you");
-      return { success: true, data: response.data };
+      const response = await removeVideoFromPlaylistApi(playlistId, videoId);
+      const updatedPlaylist = response.data;
+
+      setPlaylists((prev) =>
+        prev.map((item) => (item._id === playlistId ? updatedPlaylist : item)),
+      );
+
+      return { success: true, data: updatedPlaylist };
     } catch (err) {
-      setError(err.message || "Failed to Create Playlist");
+      setError(err.message || "Failed to remove Playlist");
     } finally {
       setIsLoading(false);
     }

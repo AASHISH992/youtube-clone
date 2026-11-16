@@ -50,6 +50,34 @@ const toggleSubscription = asyncHandler(async (req, res) => {
   }
 });
 
+const getSubscriptionStatus = asyncHandler(async (req, res) => {
+  const { channelId } = req.params;
+  if (!isValidObjectId(channelId)) {
+    throw new ApiError(400, "Invalid Channel Id");
+  }
+
+  const subscribe = await Subscription.findOne({
+    channel: channelId,
+    subscriber: req.user._id,
+  });
+  res.status(200).json(new ApiResponse(200, { isSubscribe: !!subscribe }));
+});
+
+const getChannelSubscribersCount = asyncHandler(async (req, res) => {
+  const { channelId } = req.params;
+  if (!isValidObjectId(channelId)) {
+    throw new ApiError(400, "Invalid Channel Id");
+  }
+
+  const SubscriberCount = await Subscription.countDocuments({
+    channel: new mongoose.Types.ObjectId(channelId),
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { subscriberCount: SubscriberCount }));
+});
+
 // controller to return subscriber list of a channel
 const getChannelSubscribers = asyncHandler(async (req, res) => {
   // get channel
@@ -245,4 +273,10 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
     );
 });
 
-export { toggleSubscription, getChannelSubscribers, getSubscribedChannels };
+export {
+  toggleSubscription,
+  getChannelSubscribers,
+  getSubscribedChannels,
+  getSubscriptionStatus,
+  getChannelSubscribersCount,
+};

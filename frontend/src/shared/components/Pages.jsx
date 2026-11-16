@@ -1,5 +1,5 @@
 function PageContainer({ children }) {
-  return <div className="w-full h-screen">{children}</div>;
+  return <div className="">{children}</div>;
 }
 
 function PageHeaderViewModel({ children }) {

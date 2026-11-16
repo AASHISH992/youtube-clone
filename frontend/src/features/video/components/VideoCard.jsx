@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   MetaData,
@@ -8,6 +9,8 @@ import {
   AvatarShapeAvatarSizeSmall,
   LockupMetadataViewModelAvatar,
   LockupMetadataViewModelTextContainer,
+  BottomSheet,
+  CustomSelect,
 } from "../../../shared/components/index.js";
 import {
   formatDate,
@@ -17,8 +20,11 @@ import {
 
 import ThreeDotMenu from "../../../shared/components/ThreeDotMenu.jsx";
 
-import { Bookmark  } from "lucide-react";
-import { useState } from 'react'
+import { Bookmark } from "lucide-react";
+import usePlaylist from "../../playlist/hooks/usePlaylist.js";
+import {
+  CreatePlaylist,
+} from "../../../features/playlist/components/index.js";
 
 function VideoCard({
   isFlex,
@@ -34,24 +40,54 @@ function VideoCard({
   uploadedTime,
   duration,
 }) {
+  const { playlists, addVideo, removeVideo } = usePlaylist();
   const metaItems = [`${formatViews(views)}`, formatDate(uploadedTime)];
-  const menuItems = [];
-  const [isHover, setIsHover] = useState(false);
+  const [showPlaylistCreateForm, setShowPlaylistCreateForm] = useState(false);
 
-  menuItems.push({
-    label: "Save to playlist",
-    icon: <Bookmark className="size-4 mr-2 inline" />,
-    onClick: () => {
-      const newText = prompt("Edit your comment:", comment.content);
-      if (newText && newText.trim() !== comment.content) {
-        onUpdateComment(comment._id, newText.trim());
-      }
+  const handlePlaylistCreateButton = () => {
+    setShowPlaylistCreateForm(true);
+  };
+
+  const formattedPlaylists =
+    playlists?.map((playlist) => ({
+      id: playlist._id,
+      title: playlist.name,
+      isPrivate: true,
+      image: playlist.videos?.[0]?.thumbnail,
+      hasVideo: playlist.videos?.some((video) => (video._id || video) === id),
+    })) || [];
+
+  const menuItems = [
+    {
+      label: "Save to playlist",
+      icon: <Bookmark className="w-4 h-4" />,
+      // Provide submenu view to be rendered in-place:
+      submenu: ({ onClose }) => (
+        <BottomSheet
+          playlists={formattedPlaylists}
+          onClose={onClose}
+          onNewPlaylist={handlePlaylistCreateButton}
+          onTogglePlaylist={async (playlistId) => {
+            const targetPlaylist = formattedPlaylists.find(
+              (playlist) => playlist.id === playlistId,
+            );
+
+            if (targetPlaylist?.hasVideo) {
+              await removeVideo({ playlistId, videoId: id });
+            } else {
+              await addVideo({ playlistId, videoId: id });
+            }
+          }}
+        />
+      ),
     },
-  });
+  ];
+  const [isHover, setIsHover] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div
-      className={`p-2 rounded-xl ${isHover && 'bg-red-100' } ${isFlex ? "w-full" : isScroll ? "w-56 sm:w-64 lg:w-80 xl:w-96 shrink-0 " : "w-full"}`}
+      className={`p-2 rounded-xl ${isHover ? "z-30 bg-red-100" : "z-0"} ${isFlex ? "w-full" : isScroll ? "w-56 sm:w-64 lg:w-80 xl:w-96 shrink-0 " : "w-full"}`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
     >
@@ -60,13 +96,11 @@ function VideoCard({
           {/* Video Thumbnail */}
           {/* id: videoId */}
           <Link to={`/watch/${id}`}>
-            <div className="w-full   ">
-              <img
-                src={thumbnail}
-                alt="thumbnail"
-                className="rounded-xl  w-full aspect-video object-cover"
-              />
-            </div>
+            <img
+              src={thumbnail}
+              alt="thumbnail"
+              className="rounded-xl w-full aspect-video object-cover"
+            />
           </Link>
           {/* Video Duration */}
           <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-medium px-1.5 py-0.5 rounded-md pointer-events-none">
@@ -138,7 +172,14 @@ function VideoCard({
               </ContentMetadataViewModelMetadataRow>
             </LockupMetadataViewModelTextContainer>
           )}
-          {isHover && <ThreeDotMenu items={menuItems} />}
+          {(isHover || isMenuOpen) && (
+            <div className="shrink-0 self-start">
+              <ThreeDotMenu items={menuItems} onOpenChange={setIsMenuOpen} />
+            </div>
+          )}
+          {showPlaylistCreateForm && (
+            <CreatePlaylist onClose={() => setShowPlaylistCreateForm(false)} />
+          )}
         </LockupViewModelMetadata>
       </div>
     </div>

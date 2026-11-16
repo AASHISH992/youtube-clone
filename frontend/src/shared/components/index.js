@@ -4,7 +4,7 @@ import Container from "./Container.jsx";
 import { TouchFeedback } from "./TouchFeedback.jsx";
 import Logo from "./Logo.jsx";
 import CustomSelect from "./CustomSelect.jsx";
-import BottomSheet, { VISIBILITY_OPTIONS } from "./BottomSheet.jsx";
+import BottomSheet from "./BottomSheet.jsx";
 import {
   WebScrimHost,
   BottomSheetLayout,
@@ -37,7 +37,7 @@ import {
   LockupMetadataViewModelTitle,
   LockupMetadataViewModelMetadata,
   LockupMetadataViewModelMenuButton,
-  ButtonViewModel,
+  ButtonShape,
   LockupViewModelContentImage,
 } from "./MetaData.jsx";
 import {
@@ -62,13 +62,6 @@ import {
 import { ButtonLink } from "./ButtonLink.jsx";
 
 import {
-  ThumbnailBottomOverlayViewModel,
-  ThumbnailBottomOverlayViewModelHost,
-  ThumbnailBottomOverlayViewModelBadgeContainer,
-} from "./Thumbnail.jsx";
-import { BadgeShape, BadgeShapeText } from "./Badge.jsx";
-
-import {
   AvatarShapeAvatarSizeExtraSmall,
   AvatarShapeAvatarSizeSmall,
   LockupMetadataViewModelAvatar,
@@ -83,7 +76,6 @@ export {
   Logo,
   CustomSelect,
   BottomSheet,
-  VISIBILITY_OPTIONS,
   WebScrimHost,
   BottomSheetLayout,
   BottomSheetLayoutDragLine,
@@ -116,7 +108,7 @@ export {
   LockupMetadataViewModelTitle,
   LockupMetadataViewModelMetadata,
   LockupMetadataViewModelMenuButton,
-  ButtonViewModel,
+  ButtonShape,
   LockupViewModelContentImage,
   PageContainer,
   PageHeaderViewModel,
@@ -132,9 +124,4 @@ export {
   DescriptionPreviewViewModelDescription,
   DescriptionPreviewViewModelIsOverlayVisible,
   ContentPreviewImageViewModel,
-  ThumbnailBottomOverlayViewModel,
-  ThumbnailBottomOverlayViewModelHost,
-  ThumbnailBottomOverlayViewModelBadgeContainer,
-  BadgeShapeText,
-  BadgeShape,
 };

@@ -5,6 +5,7 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+    timeout: 600000,
 });
 
 const uploadOnCloudinary = async (localFilePath) => {
@@ -13,6 +14,8 @@ const uploadOnCloudinary = async (localFilePath) => {
 
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
+        chunk_size: 6000000,
+        timeout: 600000,
     });
 
     console.log("file is uploaded on cloudinary", response.url);

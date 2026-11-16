@@ -53,6 +53,11 @@ function CommentSection({ videoId }) {
     await addComment(videoId, commentText.trim());
     setCommentText("");
   }
+  const handleAutoGrow = (e) => {
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+
+  };
 
   return (
     <div className="w-full h-full">
@@ -92,7 +97,7 @@ function CommentSection({ videoId }) {
         </div>
 
         <div
-          className={`flex my-2  group w-full ${commentText.trim() ? "h-19" : "h-9"} `}
+          className={`flex my-2  group w-full ${commentText.trim() ? "" : ""} `}
         >
           <img
             src={isLoggedIn && user?.avatar ? user.avatar : defaultAvatar}
@@ -101,13 +106,14 @@ function CommentSection({ videoId }) {
           />
 
           <form className="w-full group ml-3" onSubmit={handleSubmit}>
-            <input
+            <textarea
               value={commentText}
               placeholder="Add a comment..."
-              className="text-sm w-full h-6 border-b border-gray-300 outline-none focus:border-black "
+              className="text-sm w-full  border-b border-gray-300 outline-none focus:border-black "
               onChange={(e) => {
                 setCommentText(e.target.value);
               }}
+              onInput={handleAutoGrow}
             />
 
             {commentText.trim() && (
@@ -152,6 +158,7 @@ function CommentSection({ videoId }) {
     </div>
   );
 }
+
 function AllComments({
   comments = [],
   onDeleteComment,
@@ -234,7 +241,7 @@ function Comments({
   const { isLiked, like, likeCount } = useLike({ commentId: id });
 
   return (
-    <div className={`flex w-full mb-4 ${!isAuthor ? "h-20" : "h-12"}`}>
+    <div className={`flex w-full mb-4 `}>
       <AvatarShapeAvatarSizeSmall>
         <img
           src={authorAvatar}

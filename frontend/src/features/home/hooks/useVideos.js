@@ -1,26 +1,32 @@
 import { getHomeFeedApi } from "../api/home.api.js";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 function useVideos() {
-    const [videos, setVideos] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null)
+  const [videos, setVideos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        async function fetchVideos() {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query") || "";
 
-            try{
-                const response = await getHomeFeedApi();
-                setVideos(response.data.docs);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        fetchVideos();
-    }, []);
-    return { videos, isLoading, error };
+  useEffect(() => {
+    async function fetchVideos() {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await getHomeFeedApi(query);
+        setVideos(response.data.docs || []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchVideos();
+  }, [query]);
+  return { videos, isLoading, error };
 }
 
 export { useVideos };

@@ -23,6 +23,7 @@ const playlistPipeline = [
               {
                 $project: {
                   username: 1,
+                  fullName: 1,
                   avatar: 1,
                 },
               },
@@ -40,6 +41,7 @@ const playlistPipeline = [
             duration: 1,
             views: 1,
             avatar: "$owner.avatar",
+            fullName: "$owner.fullName",
             username: "$owner.username",
             createdAt: 1,
           },
@@ -48,11 +50,22 @@ const playlistPipeline = [
     },
   },
   {
+    $lookup: {
+      from: "users",
+      localField: "owner",
+      foreignField: "_id",
+      as: "playlistOwner",
+    },
+  },
+  { $unwind: "$playlistOwner" },
+  {
     $project: {
       _id: 1,
       name: 1,
       description: 1,
       owner: 1,
+      fullName: "$playlistOwner.fullName",
+      avatar: "$playlistOwner.avatar",
       videos: "$playlistVideos",
       createdAt: 1,
       updatedAt: 1,
